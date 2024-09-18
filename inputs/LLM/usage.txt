@@ -1,0 +1,522 @@
+I would like a python script that cleans my data, only keeping the date, offence, location_type, neighbourhood_158 columns. I would also like this data to be saved to a csv file called "cleaned_data.csv"
+
+Next I would like you to create a script that will simulate all the data that will be in "cleaned_data.csv"
+
+Here’s a script that cleans the data by keeping only the date, offence, location_type, and neighbourhood_158 columns, and saves the cleaned data to a CSV file called cleaned_data.csv. Afterward, I’ll provide another script to simulate the data that will be in “cleaned_data.csv”.
+
+Script to Clean and Save Data:
+import requests
+import pandas as pd
+from io import StringIO
+
+# Toronto Open Data API base URL
+base_url = "https://ckan0.cf.opendata.inter.prod-toronto.ca"
+
+# Retrieve the metadata for the major crime indicators package
+url = base_url + "/api/3/action/package_show"
+params = {"id": "major-crime-indicators"}
+package = requests.get(url, params=params).json()
+
+# Columns to keep
+columns_to_keep = ["occurrencedate", "offence", "premisetype", "neighbourhood_158"]
+
+# Loop through the resources
+for idx, resource in enumerate(package["result"]["resources"]):
+
+    # Check if the resource is datastore_active
+    if resource["datastore_active"]:
+
+        # Get all records in CSV format
+        url = base_url + "/datastore/dump/" + resource["id"]
+        resource_dump_data = requests.get(url).text
+
+        # Convert the CSV string to a Pandas DataFrame
+        df = pd.read_csv(StringIO(resource_dump_data))
+
+        # Clean the data by keeping only the specified columns
+        if all(col in df.columns for col in columns_to_keep):
+            cleaned_df = df[columns_to_keep]
+
+            # Rename columns for better clarity
+            cleaned_df.columns = ["date", "offence", "location_type", "neighbourhood"]
+
+            # Save the cleaned DataFrame to CSV
+            cleaned_df.to_csv("cleaned_data.csv", index=False)
+            print("Cleaned data saved to cleaned_data.csv")
+        else:
+            print("Some required columns are missing in the dataset.")
+
+            Explanation:
+
+	1.	Columns to Keep:
+	•	The relevant columns: occurrencedate, offence, premisetype, and neighbourhood_158 are selected.
+	•	The columns are renamed to date, offence, location_type, and neighbourhood for clarity.
+	2.	Save to CSV:
+	•	The cleaned DataFrame is saved to a file called cleaned_data.csv using to_csv.
+
+Script to Simulate Data for “cleaned_data.csv”:
+
+Here’s a script that generates random but plausible data for the structure of the “cleaned_data.csv” file:
+import pandas as pd
+import random
+from faker import Faker
+
+# Create a Faker instance
+fake = Faker()
+
+# Define the number of records to simulate
+num_records = 1000
+
+# Define possible offences, location types, and neighbourhoods
+offences = ["Assault", "Break and Enter", "Robbery", "Theft Over", "Auto Theft"]
+location_types = ["Residential", "Commercial", "Street", "Bar / Restaurant", "Park"]
+neighbourhoods = ["Downtown", "Scarborough", "Etobicoke", "North York", "York"]
+
+# Simulate the data
+data = {
+    "date": [fake.date_between(start_date='-2y', end_date='today') for _ in range(num_records)],
+    "offence": [random.choice(offences) for _ in range(num_records)],
+    "location_type": [random.choice(location_types) for _ in range(num_records)],
+    "neighbourhood": [random.choice(neighbourhoods) for _ in range(num_records)]
+}
+
+# Create a DataFrame with the simulated data
+simulated_df = pd.DataFrame(data)
+
+# Save the simulated data to a CSV file
+simulated_df.to_csv("simulated_cleaned_data.csv", index=False)
+print("Simulated data saved to simulated_cleaned_data.csv")
+
+# Print the first few rows of the simulated data
+print(simulated_df.head())
+Explanation:
+
+	1.	Faker Library:
+	•	The Faker library is used to generate random dates.
+	2.	Random Selection:
+	•	The offences, location types, and neighborhoods are randomly chosen from predefined lists.
+	3.	Saving Data:
+	•	The simulated data is saved in a CSV file named simulated_cleaned_data.csv.
+
+These scripts will first clean and save real data, then simulate similar data for testing or other purposes. Let me know if you need anything else!
+
+	OCC_DOW	OCC_HOUR	DIVISION	LOCATION_TYPE	PREMISES_TYPE	UCR_CODE	UCR_EXT	OFFENCE	MCI_CATEGORY	HOOD_158	NEIGHBOURHOOD_158	HOOD_140	NEIGHBOURHOOD_140
+1	GO-20141260715	2014-01-01	2014-01-01	2014	January	1	1	Wednesday	3	2014	January	1	1	Wednesday	3	D13	Apartment (Rooming House, ...	Apartment	1430	100	Assault	Assault	092	Corso Italia-Davenport (92)	092	Corso Italia-Davenport (92)
+2	GO-20141260079	2014-01-01	2013-12-31	2014	January	1	1	Wednesday	1	2013	December	31	365	Tuesday	19	D55	Other Commercial / Corporate ...	Commercial	2120	200	B&E	Break and Enter	070	South Riverdale (70)	070	South Riverdale (70)
+3	GO-20141260912	2014-01-01	2014-01-01	2014	January	1	1	Wednesday	6	2014	January	1	1	Wednesday	4	D14	Streets, Roads, Highways ...	Outside	1610	100	Robbery With Weapon	Robbery	078	Kensington-Chinatown (78)	078	Kensington-Chinatown (78)
+
+here is a data preview of the format of the columns
+
+Thanks for providing the data preview. Based on the column names and the format you’ve shown, here’s an updated version of the cleaning script that will focus on extracting the OCC_DATE, OFFENCE, LOCATION_TYPE, and NEIGHBOURHOOD_158 columns, which will be renamed as date, offence, location_type, and neighbourhood respectively.
+
+Script to Clean and Save Data:
+
+import requests
+import pandas as pd
+from io import StringIO
+
+# Toronto Open Data API base URL
+base_url = "https://ckan0.cf.opendata.inter.prod-toronto.ca"
+
+# Retrieve the metadata for the major crime indicators package
+url = base_url + "/api/3/action/package_show"
+params = {"id": "major-crime-indicators"}
+package = requests.get(url, params=params).json()
+
+# Columns to keep
+columns_to_keep = ["OCC_DATE", "OFFENCE", "LOCATION_TYPE", "NEIGHBOURHOOD_158"]
+
+# Loop through the resources
+for idx, resource in enumerate(package["result"]["resources"]):
+
+    # Check if the resource is datastore_active
+    if resource["datastore_active"]:
+
+        # Get all records in CSV format
+        url = base_url + "/datastore/dump/" + resource["id"]
+        resource_dump_data = requests.get(url).text
+
+        # Convert the CSV string to a Pandas DataFrame
+        df = pd.read_csv(StringIO(resource_dump_data))
+
+        # Clean the data by keeping only the specified columns
+        if all(col in df.columns for col in columns_to_keep):
+            cleaned_df = df[columns_to_keep]
+
+            # Rename columns for better clarity
+            cleaned_df.columns = ["date", "offence", "location_type", "neighbourhood"]
+
+            # Save the cleaned DataFrame to CSV
+            cleaned_df.to_csv("cleaned_data.csv", index=False)
+            print("Cleaned data saved to cleaned_data.csv")
+        else:
+            print("Some required columns are missing in the dataset.")
+
+            Explanation:
+
+	1.	Columns to Keep:
+	•	I mapped the following columns from your data preview:
+	•	OCC_DATE: the date of the occurrence.
+	•	OFFENCE: the type of crime.
+	•	LOCATION_TYPE: the type of location.
+	•	NEIGHBOURHOOD_158: the neighborhood.
+	•	These columns are renamed as date, offence, location_type, and neighbourhood for clarity.
+	2.	Save to CSV:
+	•	The cleaned data will be saved in a file named cleaned_data.csv.
+
+Script to Simulate Data for “cleaned_data.csv”:
+
+import pandas as pd
+import random
+from faker import Faker
+
+# Create a Faker instance
+fake = Faker()
+
+# Define the number of records to simulate
+num_records = 1000
+
+# Define possible offences, location types, and neighbourhoods
+offences = ["Assault", "Break and Enter", "Robbery", "Theft Over", "Auto Theft"]
+location_types = ["Residential", "Commercial", "Street", "Bar / Restaurant", "Park"]
+neighbourhoods = ["Downtown", "Scarborough", "Etobicoke", "North York", "York"]
+
+# Simulate the data
+data = {
+    "date": [fake.date_between(start_date='-2y', end_date='today') for _ in range(num_records)],
+    "offence": [random.choice(offences) for _ in range(num_records)],
+    "location_type": [random.choice(location_types) for _ in range(num_records)],
+    "neighbourhood": [random.choice(neighbourhoods) for _ in range(num_records)]
+}
+
+# Create a DataFrame with the simulated data
+simulated_df = pd.DataFrame(data)
+
+# Save the simulated data to a CSV file
+simulated_df.to_csv("simulated_cleaned_data.csv", index=False)
+print("Simulated data saved to simulated_cleaned_data.csv")
+
+# Print the first few rows of the simulated data
+print(simulated_df.head())
+
+This script will create a similar dataset with random data for testing or other purposes. It saves the simulated data to a file called simulated_cleaned_data.csv. Let me know if you need further adjustments!
+
+here is part of the cleaned data
+
+date,offence,location_type,neighbourhood
+2014-01-01,Assault,"Apartment (Rooming House, Condo)",Corso Italia-Davenport (92)
+2013-12-31,B&E,"Other Commercial / Corporate Places (For Profit, Warehouse, Corp. Bldg",South Riverdale (70)
+2014-01-01,Robbery With Weapon,"Streets, Roads, Highways (Bicycle Path, Private Road)",Kensington-Chinatown (78)
+2013-12-31,B&E,"Single Home, House (Attach Garage, Cottage, Mobile)",Islington (158)
+2014-01-01,B&E,Bar / Restaurant,Trinity-Bellwoods (81)
+2014-01-01,B&E,"Single Home, House (Attach Garage, Cottage, Mobile)",Newtonbrook West (36)
+2014-01-01,B&E W'Intent,"Other Commercial / Corporate Places (For Profit, Warehouse, Corp. Bldg",South Parkdale (85)
+2014-01-01,B&E W'Intent,Bar / Restaurant,O'Connor-Parkview (54)
+2014-01-01,B&E,"Other Commercial / Corporate Places (For Profit, Warehouse, Corp. Bldg",Yonge-Bay Corridor (170)
+2014-01-01,B&E,"Commercial Dwelling Unit (Hotel, Motel, B & B, Short Term Rental)",Birchcliffe-Cliffside (122)
+2014-01-01,Unlawfully In Dwelling-House,"Apartment (Rooming House, Condo)",Willowdale West (37)
+2014-01-01,B&E W'Intent,"Apartment (Rooming House, Condo)",West Hill (136)
+2014-01-01,Assault Peace Officer,"Apartment (Rooming House, Condo)",Mount Dennis (115)
+2014-01-01,B&E,"Apartment (Rooming House, Condo)",Annex (95)
+2013-12-30,B&E,"Apartment (Rooming House, Condo)",Bayview Village (52)
+2014-01-01,Assault,"Single Home, House (Attach Garage, Cottage, Mobile)",Kennedy Park (124)
+2014-01-01,B&E W'Intent,"Other Commercial / Corporate Places (For Profit, Warehouse, Corp. Bldg",Bendale-Glen Andrew (156)
+2014-01-01,Theft Over,"Other Commercial / Corporate Places (For Profit, Warehouse, Corp. Bldg",Bendale-Glen Andrew (156)
+2014-01-01,Robbery - Purse Snatch,"Apartment (Rooming House, Condo)",Weston (113)
+2014-01-01,Assault,"Streets, Roads, Highways (Bicycle Path, Private Road)",Annex (95)
+2014-01-01,Robbery - Business,"Other Commercial / Corporate Places (For Profit, Warehouse, Corp. Bldg",Church-Wellesley (167)
+2013-12-31,Assault,"Single Home, House (Attach Garage, Cottage, Mobile)",Morningside Heights (144)
+2014-01-01,Assault,"Single Home, House (Attach Garage, Cottage, Mobile)",Rockcliffe-Smythe (111)
+2014-01-01,Assault,"Streets, Roads, Highways (Bicycle Path, Private Road)",Wellington Place (164)
+2014-01-01,Assault,"Apartment (Rooming House, Condo)",South Parkdale (85)
+2013-12-31,Assault,Bar / Restaurant,Wellington Place (164)
+2013-12-31,Assault,Bar / Restaurant,Wellington Place (164)
+2014-01-01,Assault,Ttc Subway Station,Annex (95)
+2013-12-31,Assault,Ttc Subway Train,Yonge-Bay Corridor (170)
+2014-01-01,Assault,"Apartment (Rooming House, Condo)",Willowdale West (37)
+2014-01-01,Assault With Weapon,"Apartment (Rooming House, Condo)",Taylor-Massey (61)
+
+Now simulate an appropriate similar data set, make sure the date range is from 2013-12-31 to 2024-06-29, neighbourhoods can each just be a number from [1,158]
+
+Here is a Python script to simulate a similar dataset based on your provided structure. It generates random data for offences, location types, neighbourhoods, and dates within the specified range.
+import pandas as pd
+import random
+from faker import Faker
+
+# Create a Faker instance
+fake = Faker()
+
+# Define the number of records to simulate
+num_records = 1000
+
+# Define possible offences and location types
+offences = [
+    "Assault", "B&E", "Robbery With Weapon", "B&E W'Intent", 
+    "Unlawfully In Dwelling-House", "Assault Peace Officer", 
+    "Theft Over", "Robbery - Purse Snatch", "Robbery - Business", 
+    "Assault With Weapon"
+]
+
+location_types = [
+    "Apartment (Rooming House, Condo)", 
+    "Other Commercial / Corporate Places (For Profit, Warehouse, Corp. Bldg)", 
+    "Streets, Roads, Highways (Bicycle Path, Private Road)", 
+    "Single Home, House (Attach Garage, Cottage, Mobile)", 
+    "Bar / Restaurant", 
+    "Commercial Dwelling Unit (Hotel, Motel, B & B, Short Term Rental)", 
+    "Ttc Subway Station", 
+    "Ttc Subway Train"
+]
+
+# Define date range (from 2013-12-31 to 2024-06-29)
+start_date = '2013-12-31'
+end_date = '2024-06-29'
+
+# Simulate the data
+data = {
+    "date": [fake.date_between(start_date=start_date, end_date=end_date) for _ in range(num_records)],
+    "offence": [random.choice(offences) for _ in range(num_records)],
+    "location_type": [random.choice(location_types) for _ in range(num_records)],
+    "neighbourhood": [random.randint(1, 158) for _ in range(num_records)]  # Neighbourhoods are represented by numbers between 1 and 158
+}
+
+# Create a DataFrame with the simulated data
+simulated_df = pd.DataFrame(data)
+
+# Save the simulated data to a CSV file
+simulated_df.to_csv("simulated_cleaned_data.csv", index=False)
+print("Simulated data saved to simulated_cleaned_data.csv")
+
+# Print the first few rows of the simulated data
+print(simulated_df.head())
+
+(.venv) (.venv) alexanderguarasci@Alexanders-MacBook-Pro-2 paper_one % /Users/alexanderguarasci/Documents/GitHub/paper_one/.venv/bin/python /Users/ale
+xanderguarasci/Documents/GitHub/paper_one/scripts/data_sim.py
+Traceback (most recent call last):
+  File "/Users/alexanderguarasci/Documents/GitHub/paper_one/scripts/data_sim.py", line 36, in <module>
+    "date": [fake.date_between(start_date=start_date, end_date=end_date) for _ in range(num_records)],
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/alexanderguarasci/Documents/GitHub/paper_one/scripts/data_sim.py", line 36, in <listcomp>
+    "date": [fake.date_between(start_date=start_date, end_date=end_date) for _ in range(num_records)],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/alexanderguarasci/Documents/GitHub/paper_one/.venv/lib/python3.11/site-packages/faker/providers/date_time/__init__.py", line 2071, in date_between
+    start_date = self._parse_date(start_date)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/alexanderguarasci/Documents/GitHub/paper_one/.venv/lib/python3.11/site-packages/faker/providers/date_time/__init__.py", line 2027, in _parse_date
+    time_params = cls._parse_date_string(value)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/alexanderguarasci/Documents/GitHub/paper_one/.venv/lib/python3.11/site-packages/faker/providers/date_time/__init__.py", line 1985, in _parse_date_string
+    raise ParseError(f"Can't parse date string `{value}`")
+faker.providers.date_time.ParseError: Can't parse date string `2013-12-31`
+
+It looks like there’s an issue with parsing the date strings in the Faker library. This can happen if Faker expects date strings in a different format. To fix this, we can use pd.date_range from pandas to generate random dates directly, which will ensure compatibility.
+
+Here’s the revised script that uses pandas to generate the dates:
+import pandas as pd
+import random
+
+# Define the number of records to simulate
+num_records = 1000
+
+# Define possible offences and location types
+offences = [
+    "Assault", "B&E", "Robbery With Weapon", "B&E W'Intent", 
+    "Unlawfully In Dwelling-House", "Assault Peace Officer", 
+    "Theft Over", "Robbery - Purse Snatch", "Robbery - Business", 
+    "Assault With Weapon"
+]
+
+location_types = [
+    "Apartment (Rooming House, Condo)", 
+    "Other Commercial / Corporate Places (For Profit, Warehouse, Corp. Bldg)", 
+    "Streets, Roads, Highways (Bicycle Path, Private Road)", 
+    "Single Home, House (Attach Garage, Cottage, Mobile)", 
+    "Bar / Restaurant", 
+    "Commercial Dwelling Unit (Hotel, Motel, B & B, Short Term Rental)", 
+    "Ttc Subway Station", 
+    "Ttc Subway Train"
+]
+
+# Define date range (from 2013-12-31 to 2024-06-29)
+start_date = pd.to_datetime('2013-12-31')
+end_date = pd.to_datetime('2024-06-29')
+
+# Generate random dates
+date_range = pd.date_range(start=start_date, end=end_date)
+dates = [random.choice(date_range) for _ in range(num_records)]
+
+# Simulate the data
+data = {
+    "date": dates,
+    "offence": [random.choice(offences) for _ in range(num_records)],
+    "location_type": [random.choice(location_types) for _ in range(num_records)],
+    "neighbourhood": [random.randint(1, 158) for _ in range(num_records)]  # Neighbourhoods are represented by numbers between 1 and 158
+}
+
+# Create a DataFrame with the simulated data
+simulated_df = pd.DataFrame(data)
+
+# Save the simulated data to a CSV file
+simulated_df.to_csv("simulated_cleaned_data.csv", index=False)
+print("Simulated data saved to simulated_cleaned_data.csv")
+
+# Print the first few rows of the simulated data
+print(simulated_df.head())
+Changes Made:
+
+	1.	Date Generation: Replaced Faker with pandas.date_range to generate dates. This avoids compatibility issues with date formats.
+
+This script should now run without errors and generate the simulated dataset as required. Let me know if you encounter any other issues!
+
+(.venv) (.venv) alexanderguarasci@Alexanders-MacBook-Pro-2 paper_one % /Users/alexanderguarasci/Documents/GitHub/paper_one/.venv/bin/python /Users/ale
+xanderguarasci/Documents/GitHub/paper_one/scripts/data_sim.py
+Traceback (most recent call last):
+  File "/Users/alexanderguarasci/Documents/GitHub/paper_one/scripts/data_sim.py", line 32, in <module>
+    dates = [random.choice(date_range) for _ in range(num_records)]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/alexanderguarasci/Documents/GitHub/paper_one/scripts/data_sim.py", line 32, in <listcomp>
+    dates = [random.choice(date_range) for _ in range(num_records)]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/random.py", line 369, in choice
+    if not seq:
+  File "/Users/alexanderguarasci/Documents/GitHub/paper_one/.venv/lib/python3.11/site-packages/pandas/core/indexes/base.py", line 3190, in __nonzero__
+    raise ValueError(
+ValueError: The truth value of a DatetimeIndex is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+It looks like there's an issue with parsing the date strings in the `Faker` library. This can happen if `Faker` expects date strings in a different format. To fix this, we can use `pd.date_range` from `pandas` to generate random dates directly, which will ensure compatibility.
+
+Here's the revised script that uses `pandas` to generate the dates:
+
+```python
+import pandas as pd
+import random
+
+# Define the number of records to simulate
+num_records = 1000
+
+# Define possible offences and location types
+offences = [
+    "Assault", "B&E", "Robbery With Weapon", "B&E W'Intent", 
+    "Unlawfully In Dwelling-House", "Assault Peace Officer", 
+    "Theft Over", "Robbery - Purse Snatch", "Robbery - Business", 
+    "Assault With Weapon"
+]
+
+location_types = [
+    "Apartment (Rooming House, Condo)", 
+    "Other Commercial / Corporate Places (For Profit, Warehouse, Corp. Bldg)", 
+    "Streets, Roads, Highways (Bicycle Path, Private Road)", 
+    "Single Home, House (Attach Garage, Cottage, Mobile)", 
+    "Bar / Restaurant", 
+    "Commercial Dwelling Unit (Hotel, Motel, B & B, Short Term Rental)", 
+    "Ttc Subway Station", 
+    "Ttc Subway Train"
+]
+
+# Define date range (from 2013-12-31 to 2024-06-29)
+start_date = pd.to_datetime('2013-12-31')
+end_date = pd.to_datetime('2024-06-29')
+
+# Generate random dates
+date_range = pd.date_range(start=start_date, end=end_date)
+dates = [random.choice(date_range) for _ in range(num_records)]
+
+# Simulate the data
+data = {
+    "date": dates,
+    "offence": [random.choice(offences) for _ in range(num_records)],
+    "location_type": [random.choice(location_types) for _ in range(num_records)],
+    "neighbourhood": [random.randint(1, 158) for _ in range(num_records)]  # Neighbourhoods are represented by numbers between 1 and 158
+}
+
+# Create a DataFrame with the simulated data
+simulated_df = pd.DataFrame(data)
+
+# Save the simulated data to a CSV file
+simulated_df.to_csv("simulated_cleaned_data.csv", index=False)
+print("Simulated data saved to simulated_cleaned_data.csv")
+
+# Print the first few rows of the simulated data
+print(simulated_df.head())
+```
+
+### Changes Made:
+1. **Date Generation**: Replaced `Faker` with `pandas.date_range` to generate dates. This avoids compatibility issues with date formats.
+
+This script should now run without errors and generate the simulated dataset as required. Let me know if you encounter any other issues!
+
+(.venv) (.venv) alexanderguarasci@Alexanders-MacBook-Pro-2 paper_one % /Users/alexanderguarasci/Documents/GitHub/paper_one/.venv/bin/python /Users/ale
+xanderguarasci/Documents/GitHub/paper_one/scripts/data_sim.py
+Traceback (most recent call last):
+  File "/Users/alexanderguarasci/Documents/GitHub/paper_one/scripts/data_sim.py", line 32, in <module>
+    dates = [random.choice(date_range) for _ in range(num_records)]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/alexanderguarasci/Documents/GitHub/paper_one/scripts/data_sim.py", line 32, in <listcomp>
+    dates = [random.choice(date_range) for _ in range(num_records)]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/random.py", line 369, in choice
+    if not seq:
+  File "/Users/alexanderguarasci/Documents/GitHub/paper_one/.venv/lib/python3.11/site-packages/pandas/core/indexes/base.py", line 3190, in __nonzero__
+    raise ValueError(
+ValueError: The truth value of a DatetimeIndex is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+It seems the `random.choice` function is having trouble with the `DatetimeIndex` object directly. We can convert the `DatetimeIndex` to a list of `datetime` objects and then use `random.choice` on this list. 
+
+Here’s how you can modify the script to fix the issue:
+
+```python
+import pandas as pd
+import random
+
+# Define the number of records to simulate
+num_records = 1000
+
+# Define possible offences and location types
+offences = [
+    "Assault", "B&E", "Robbery With Weapon", "B&E W'Intent", 
+    "Unlawfully In Dwelling-House", "Assault Peace Officer", 
+    "Theft Over", "Robbery - Purse Snatch", "Robbery - Business", 
+    "Assault With Weapon"
+]
+
+location_types = [
+    "Apartment (Rooming House, Condo)", 
+    "Other Commercial / Corporate Places (For Profit, Warehouse, Corp. Bldg)", 
+    "Streets, Roads, Highways (Bicycle Path, Private Road)", 
+    "Single Home, House (Attach Garage, Cottage, Mobile)", 
+    "Bar / Restaurant", 
+    "Commercial Dwelling Unit (Hotel, Motel, B & B, Short Term Rental)", 
+    "Ttc Subway Station", 
+    "Ttc Subway Train"
+]
+
+# Define date range (from 2013-12-31 to 2024-06-29)
+start_date = pd.to_datetime('2013-12-31')
+end_date = pd.to_datetime('2024-06-29')
+
+# Generate random dates
+date_range = pd.date_range(start=start_date, end=end_date).to_list()
+dates = [random.choice(date_range) for _ in range(num_records)]
+
+# Simulate the data
+data = {
+    "date": dates,
+    "offence": [random.choice(offences) for _ in range(num_records)],
+    "location_type": [random.choice(location_types) for _ in range(num_records)],
+    "neighbourhood": [random.randint(1, 158) for _ in range(num_records)]  # Neighbourhoods are represented by numbers between 1 and 158
+}
+
+# Create a DataFrame with the simulated data
+simulated_df = pd.DataFrame(data)
+
+# Save the simulated data to a CSV file
+simulated_df.to_csv("simulated_cleaned_data.csv", index=False)
+print("Simulated data saved to simulated_cleaned_data.csv")
+
+# Print the first few rows of the simulated data
+print(simulated_df.head())
+```
+
+### Changes Made:
+- **Convert `DatetimeIndex` to List**: Used `.to_list()` to convert the `DatetimeIndex` to a list of `datetime` objects before using `random.choice`.
+
+This should resolve the issue and allow you to generate and save the simulated dataset correctly. Let me know if you need any further assistance!
