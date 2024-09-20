@@ -1,7 +1,7 @@
 ---
 title: "Toronto Major Crime Trends and Analysis"
 author: "Alexander Guarasci"
-date: "`r format(Sys.Date(), '%B %d, %Y')`" # This will add the current date
+date: today
 date-format: long
 bibliography: references.bib
 execute:
