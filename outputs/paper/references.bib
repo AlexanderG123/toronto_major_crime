@@ -6,34 +6,53 @@
     url = {https://CRAN.R-project.org/package=opendatatoronto},
   }
 
-  @misc{Python,
-  title = {Python: A high-level, general-purpose programming language},
-  author = {Python Software Foundation},
-  year = {2024},
-  url = {https://www.python.org/}
+@book{Python,
+ author = {Van Rossum, Guido and Drake, Fred L.},
+ title = {Python 3 Reference Manual},
+ year = {2009},
+ isbn = {1441412697},
+ publisher = {CreateSpace},
+ address = {Scotts Valley, CA}
 }
 
-@misc{Pandas,
-  title = {pandas: Python Data Analysis Library},
-  author = {The pandas development team},
-  year = {2024},
-  url = {https://pandas.pydata.org/}
+@software{Pandas,
+    author       = {The pandas development team},
+    title        = {pandas-dev/pandas: Pandas},
+    month        = feb,
+    year         = 2020,
+    publisher    = {Zenodo},
+    version      = {latest},
+    doi          = {10.5281/zenodo.3509134},
+    url          = {https://doi.org/10.5281/zenodo.3509134}
 }
 
-@misc{Matplot,
-  title = {Matplotlib: Visualization with Python},
-  author = {Hunter, J. D. and The Matplotlib Development Team},
-  year = {2024},
-  url = {https://matplotlib.org/}
+@Article{Matplot,
+  Author    = {Hunter, J. D.},
+  Title     = {Matplotlib: A 2D graphics environment},
+  Journal   = {Computing in Science \& Engineering},
+  Volume    = {9},
+  Number    = {3},
+  Pages     = {90--95},
+  abstract  = {Matplotlib is a 2D graphics package used for Python for
+  application development, interactive scripting, and publication-quality
+  image generation across user interfaces and operating systems.},
+  publisher = {IEEE COMPUTER SOC},
+  doi       = {10.1109/MCSE.2007.55},
+  year      = 2007
 }
 
-@misc{Seaborn,
-  title = {Seaborn: Statistical Data Visualization},
-  author = {Waskom, M. L. and The Seaborn Development Team},
-  year = {2024},
-  url = {https://seaborn.pydata.org/}
-}
-
+@article{Seaborn,
+    doi = {10.21105/joss.03021},
+    url = {https://doi.org/10.21105/joss.03021},
+    year = {2021},
+    publisher = {The Open Journal},
+    volume = {6},
+    number = {60},
+    pages = {3021},
+    author = {Michael L. Waskom},
+    title = {seaborn: statistical data visualization},
+    journal = {Journal of Open Source Software}
+ }
 @misc{requests,
   title = {Requests: HTTP for Humans},
   author = {Reitz, Kenneth and The Requests Development Team},
@@ -60,4 +79,11 @@
   author = {Python Software Foundation},
   year = {2024},
   url = {https://docs.python.org/3/library/random.html}
+}
+@misc{pathlib,
+  title = {Pathlib --- Object-oriented filesystem paths},
+  author = {Python Software Foundation},
+  year = {2019},
+  note = {Version 3.4 and above},
+  url = {https://docs.python.org/3/library/pathlib.html}
 }
