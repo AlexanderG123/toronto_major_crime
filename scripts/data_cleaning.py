@@ -32,7 +32,7 @@ for idx, resource in enumerate(package["result"]["resources"]):
             cleaned_df.columns = ["date", "offence", "location_type", "neighbourhood"]
 
             # Save the cleaned DataFrame to CSV
-            cleaned_df.to_csv("outputs/cleaned_data.csv", index=False)
+            cleaned_df.to_csv("outputs/data/cleaned_data.csv", index=False)
             print("Cleaned data saved to cleaned_data.csv")
         else:
             print("Some required columns are missing in the dataset.")
